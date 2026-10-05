@@ -24,20 +24,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Username dan password wajib diisi." }, { status: 400 });
   }
 
-  if (!process.env.DATABASE_URL) {
-    return NextResponse.json(
-      { error: "Server belum dikonfigurasi: DATABASE_URL belum diatur di Vercel." },
-      { status: 503 },
-    );
-  }
-
-  if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
-    return NextResponse.json(
-      { error: "Server belum dikonfigurasi: SESSION_SECRET harus diatur minimal 32 karakter di Vercel." },
-      { status: 503 },
-    );
-  }
-
   try {
     const state = await loadDatabaseState();
     const username = credentials.username.trim();
@@ -64,9 +50,6 @@ export async function POST(request: Request) {
     return response;
   } catch (error) {
     console.error("Gagal memproses login:", error);
-    return NextResponse.json(
-      { error: "Login gagal diproses. Periksa koneksi database Railway dan log deployment Vercel." },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Login tidak dapat diproses." }, { status: 500 });
   }
 }
