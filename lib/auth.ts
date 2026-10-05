@@ -7,17 +7,6 @@ export interface SessionUser {
   role: "ADMIN" | "KASIR";
 }
 
-const encodeBase64Url = (value: string): string => {
-  if (typeof window !== "undefined") {
-    return btoa(unescape(encodeURIComponent(value)))
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=+$/g, "");
-  }
-
-  return Buffer.from(value, "utf-8").toString("base64url");
-};
-
 const decodeBase64Url = (value: string): string => {
   if (typeof window !== "undefined") {
     const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
@@ -33,14 +22,12 @@ export const hashPassword = (value: string): string => bcrypt.hashSync(value, 10
 export const verifyPassword = (value: string, hash: string): boolean =>
   bcrypt.compareSync(value, hash);
 
-export const createSessionCookieValue = (user: SessionUser): string =>
-  encodeBase64Url(JSON.stringify(user));
-
 export const parseSessionCookieValue = (value: string | undefined): SessionUser | null => {
   if (!value) return null;
 
   try {
-    const json = decodeBase64Url(value);
+    const payload = value.split(".")[0];
+    const json = decodeBase64Url(payload);
     const parsed = JSON.parse(json) as SessionUser;
     if (!parsed.id || !parsed.username || !parsed.role) {
       return null;

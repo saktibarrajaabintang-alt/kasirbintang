@@ -3,8 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Eye, EyeOff, LockKeyhole, ShieldCheck, UserRound } from "lucide-react";
-import { createSessionCookieValue, verifyPassword } from "@/lib/auth";
-import { loadAppState } from "@/lib/store";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,35 +12,30 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
     setError("");
 
-    const state = loadAppState();
-    const user = state.users.find((item) => item.username === username.trim());
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: username.trim(), password }),
+      });
+      const result = await response.json() as { error?: string };
+      if (!response.ok) {
+        setError(result.error ?? "Login gagal. Silakan coba lagi.");
+        return;
+      }
 
-    if (!user) {
-      setError("Username tidak ditemukan.");
+      router.push("/dashboard");
+    } catch (requestError) {
+      console.error("Gagal menghubungi server login:", requestError);
+      setError("Server tidak dapat dihubungi. Periksa koneksi lalu coba lagi.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    if (!verifyPassword(password, user.passwordHash)) {
-      setError("Password salah. Silakan coba lagi.");
-      setLoading(false);
-      return;
-    }
-
-    const session = {
-      id: user.id,
-      name: user.name,
-      username: user.username,
-      role: user.role,
-    };
-
-    document.cookie = `pos_session=${createSessionCookieValue(session)}; path=/; max-age=86400; samesite=lax`;
-    router.push("/dashboard");
   };
 
   return (

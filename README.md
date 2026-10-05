@@ -34,9 +34,9 @@ Aplikasi POS / kasir profesional untuk Business Center jurusan TJKT SMK Citra Ne
 npm install
 ```
 
-3. Setup database MySQL / MariaDB di lokal
-4. Import file `database.sql` ke HeidiSQL atau MySQL client
-5. Salin `.env.example` menjadi `.env.local` lalu sesuaikan koneksi database
+3. Isi `DATABASE_URL` di `.env.local` dengan URL MySQL, misalnya koneksi dari Railway, dan atur `SESSION_SECRET` memakai nilai acak minimal 32 karakter
+4. Tabel `users`, `products`, `members`, dan `transactions` dibuat otomatis saat aplikasi pertama kali terhubung. Jika database kosong, state lokal `.data/app-state.json` akan dipindahkan ke MySQL; jika file itu tidak ada, data demo akan digunakan.
+5. Alternatifnya, pilih database target di phpMyAdmin lalu import `database.sql` untuk membuat tabel dan sample data
 6. Jalankan project:
 
 ```bash
@@ -64,5 +64,5 @@ Contoh file environment tersedia di `.env.example`.
 ## Catatan penting
 
 - `.env` tidak disarankan untuk dipublish ke GitHub
-- Aplikasi ini menyediakan fallback demo state ketika database tidak terhubung, tetapi schema SQL siap dipakai di MySQL / MariaDB
-- Untuk environment production, isi `DATABASE_URL` dengan koneksi database yang valid
+- Jangan commit `.env.local` atau membagikan `DATABASE_URL`; URL berisi kredensial database
+- Saat MySQL tidak tersedia, aplikasi mencatat error dan masih dapat memakai data lokal sementara

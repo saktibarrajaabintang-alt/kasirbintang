@@ -222,7 +222,13 @@ export const saveAppState = (state: AppState): void => {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(state),
-  }).catch(() => undefined);
+  }).then((response) => {
+    if (!response.ok) {
+      console.error("Gagal menyimpan perubahan ke database:", response.status);
+    }
+  }).catch((error: unknown) => {
+    console.error("Gagal menghubungi database:", error);
+  });
   window.dispatchEvent(new Event("kasirbintang-state-updated"));
 };
 
@@ -236,7 +242,8 @@ export const loadSharedAppState = async (): Promise<AppState> => {
     localStorage.setItem(STORAGE_KEYS.app, JSON.stringify(state));
     window.dispatchEvent(new Event("kasirbintang-state-updated"));
     return state;
-  } catch {
+  } catch (error: unknown) {
+    console.error("Gagal memuat state dari database; memakai data lokal sementara:", error);
     return loadAppState();
   }
 };

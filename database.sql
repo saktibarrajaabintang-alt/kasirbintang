@@ -4,9 +4,6 @@
 -- 4 tables only, as required by the project specification.
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS kasirbintang;
-USE kasirbintang;
-
 -- users: admin + kasir data
 CREATE TABLE IF NOT EXISTS users (
   id VARCHAR(64) NOT NULL PRIMARY KEY,
@@ -58,8 +55,6 @@ CREATE TABLE IF NOT EXISTS transactions (
   status ENUM('COMPLETED') NOT NULL DEFAULT 'COMPLETED',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT fk_transactions_cashier FOREIGN KEY (cashier_id) REFERENCES users(id),
-  CONSTRAINT fk_transactions_member FOREIGN KEY (member_id) REFERENCES members(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================================
