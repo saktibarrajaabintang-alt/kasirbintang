@@ -60,6 +60,7 @@ File `database.sql` berisi schema untuk 4 tabel utama:
 ## Environment
 
 Contoh file environment tersedia di `.env.example`.
+Untuk deployment di Vercel, tambahkan `DATABASE_URL` (URL koneksi MySQL Railway) dan `SESSION_SECRET` (nilai acak rahasia minimal 32 karakter) di **Project Settings → Environment Variables** untuk environment yang dipakai, lalu redeploy. Jangan gunakan nilai contoh dari `.env.example` untuk `SESSION_SECRET`.
 
 ## Catatan penting
 
